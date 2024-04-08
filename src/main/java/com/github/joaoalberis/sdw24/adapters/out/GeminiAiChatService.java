@@ -1,5 +1,6 @@
 package com.github.joaoalberis.sdw24.adapters.out;
 
+import com.github.joaoalberis.sdw24.domain.exception.ComunicationErrorApiException;
 import com.github.joaoalberis.sdw24.domain.ports.GenerativeAiService;
 import feign.FeignException;
 import feign.RequestInterceptor;
@@ -7,7 +8,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.context.annotation.Bean;
-import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
@@ -34,9 +34,9 @@ public interface GeminiAiChatService extends GenerativeAiService {
             GoogleGeminiResp resp = textOnlyInput(req);
             return resp.candidates().getFirst().content().parts().getFirst().text();
         }catch (FeignException httpErros){
-            return "Foi mal! Error de comunicação com a API do Google Gemini";
+            throw new ComunicationErrorApiException("Foi mal! Error de comunicação com a API do Google Gemini");
         }catch (Exception unexpectedError){
-            return "Foi mal! O retorno da API do Google Gemini não contém os dados esperados";
+            throw new ComunicationErrorApiException("Foi mal! O retorno da API do Google Gemini não contém os dados esperados");
         }
 
     }

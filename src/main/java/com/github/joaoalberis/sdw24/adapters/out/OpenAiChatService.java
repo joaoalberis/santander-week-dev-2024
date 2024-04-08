@@ -1,5 +1,6 @@
 package com.github.joaoalberis.sdw24.adapters.out;
 
+import com.github.joaoalberis.sdw24.domain.exception.ComunicationErrorApiException;
 import com.github.joaoalberis.sdw24.domain.ports.GenerativeAiService;
 import feign.FeignException;
 import feign.RequestInterceptor;
@@ -33,9 +34,9 @@ public interface OpenAiChatService extends GenerativeAiService {
             OpenAiChatCompletionResp resp = chatCompletion(req);
             return resp.choices().getFirst().message().content();
         }catch (FeignException httpErros){
-            return "Foi mal! Error de comunicação com a API da OpenAi";
+            throw new ComunicationErrorApiException("Foi mal! Error de comunicação com a API da OpenAi");
         }catch (Exception unexpectedError){
-            return "Foi mal! O retorno da API da OpenAi não contém os dados esperados";
+            throw new ComunicationErrorApiException("Foi mal! O retorno da API da OpenAi não contém os dados esperados");
         }
 
     }
